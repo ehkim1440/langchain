@@ -89,8 +89,8 @@ class ChatHuggingFace(BaseChatModel):
     ) -> Iterator[ChatGenerationChunk]:
         request = self._to_chat_prompt(messages)
 
-        for data in self.llm._stream(request, **kwargs):
-            delta = data.text
+        for data in self.llm.stream(request, **kwargs):
+            delta = data
             chunk = ChatGenerationChunk(message=AIMessageChunk(content=delta))
             if run_manager:
                 run_manager.on_llm_new_token(delta, chunk=chunk)
@@ -104,8 +104,8 @@ class ChatHuggingFace(BaseChatModel):
         **kwargs: Any,
     ) -> AsyncIterator[ChatGenerationChunk]:
         request = self._to_chat_prompt(messages)
-        async for data in self.llm._astream(request, **kwargs):  # await 대신 async for 사용
-            delta = data.text
+        async for data in self.llm.astream(request, **kwargs):  # await 대신 async for 사용
+            delta = data
             chunk = ChatGenerationChunk(message=AIMessageChunk(content=delta))
             if run_manager:
                 await run_manager.on_llm_new_token(delta, chunk=chunk)
